@@ -17,12 +17,49 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    SensorManager sensorManager;
+    Sensor sensor;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // setContentView(R.layout.activity_main);
         setContentView(new MyView(this));
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY); // (Sensor.TYPE_GYROSCOPE);
+
     }
+
+    public void onResume() {
+        super.onResume();
+        sensorManager.registerListener(gyroListener, sensor,
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    public void onStop() {
+        super.onStop();
+        sensorManager.unregisterListener(gyroListener);
+    }
+
+    public SensorEventListener gyroListener = new SensorEventListener() {
+        public void onAccuracyChanged(Sensor sensor, int acc) {
+        }
+
+        public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            Log.d("Gravity","X : " + (int) x + " rad/s, Y : " + (int) y + " rad/s, Z : " + (int) z + " rad/s,");
+
+            // textX.setText("X : " + (int) x + " rad/s");
+            // textY.setText("Y : " + (int) y + " rad/s");
+            // textZ.setText("Z : " + (int) z + " rad/s");
+        }
+    };
 
     public class MyView extends View
     {
@@ -117,27 +154,6 @@ public class MainActivity extends AppCompatActivity {
             ball.move();
             invalidate();
         }
-
-
-        public SensorEventListener gyroListener = new SensorEventListener() {
-            public void onAccuracyChanged(Sensor sensor, int acc) {
-            }
-
-            public void onSensorChanged(SensorEvent event) {
-                float x = event.values[0];
-                float y = event.values[1];
-                float z = event.values[2];
-
-
-                Log.d("X","X : " + (int) x + " rad/s");
-                Log.d("Y", "Y : " + (int) y + " rad/s");
-                Log.d("Z","Z : " + (int) z + " rad/s");
-
-                // textX.setText("X : " + (int) x + " rad/s");
-                // textY.setText("Y : " + (int) y + " rad/s");
-                // textZ.setText("Z : " + (int) z + " rad/s");
-            }
-        };
 
 
 /*        public void onSensorChanged(SensorEvent event)
