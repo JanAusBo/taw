@@ -6,8 +6,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,8 +32,14 @@ public class MainActivity extends AppCompatActivity {
         int radius = 150;
         Ball ball = new Ball(150, 150);
 
+        private SensorManager sensorManager;
+        private Sensor sensor;
+
         private int mInterval = 5; // 5 seconds by default, can be changed later
         private Handler mHandler;
+
+        private float gravity[];
+        private float linear_acceleration[];
 
 
 //        @Override
@@ -65,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
             paint = new Paint();
 
             mHandler = new Handler();
+
+            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+            gravity = new float[3];
+            linear_acceleration = new float[3];
+
             startRepeatingTask();
         }
 
@@ -84,14 +100,35 @@ public class MainActivity extends AppCompatActivity {
             canvas.drawCircle(ball.getPosX(), ball.getPosY(), radius, paint);
         }
 
-        private void collisionCheck(){
-
-
+        private void collisionChecker(){
+            if (ball.getPosY() + radius >= y || ball.getPosY() - radius <= 0){
+                ball.invertY();
+            }
         }
 
         private void moveBall(){
-            ball.move(1, 1);
+
+            Log.v("moveBall", sensor.toString());
+            collisionChecker();
+            ball.move();
             invalidate();
+        }
+
+        public void onSensorChanged(SensorEvent event)
+        {
+            // alpha is calculated as t / (t + dT)
+            // with t, the low-pass filter's time-constant
+            // and dT, the event delivery rate
+
+            final float alpha = (float) 0.8;
+
+            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+
+            linear_acceleration[0] = event.values[0] - gravity[0];
+            linear_acceleration[1] = event.values[1] - gravity[1];
+            linear_acceleration[2] = event.values[2] - gravity[2];
         }
 
 
