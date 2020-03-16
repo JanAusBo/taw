@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -101,6 +102,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void collisionChecker(){
+            if (ball.getPosX() + radius >= x || ball.getPosX() - radius <= 0){
+                ball.invertX();
+            }
             if (ball.getPosY() + radius >= y || ball.getPosY() - radius <= 0){
                 ball.invertY();
             }
@@ -108,13 +112,35 @@ public class MainActivity extends AppCompatActivity {
 
         private void moveBall(){
 
-            Log.v("moveBall", sensor.toString());
+            // Log.v("moveBall", sensor.toString());
             collisionChecker();
             ball.move();
             invalidate();
         }
 
-        public void onSensorChanged(SensorEvent event)
+
+        public SensorEventListener gyroListener = new SensorEventListener() {
+            public void onAccuracyChanged(Sensor sensor, int acc) {
+            }
+
+            public void onSensorChanged(SensorEvent event) {
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
+
+
+                Log.d("X","X : " + (int) x + " rad/s");
+                Log.d("Y", "Y : " + (int) y + " rad/s");
+                Log.d("Z","Z : " + (int) z + " rad/s");
+
+                // textX.setText("X : " + (int) x + " rad/s");
+                // textY.setText("Y : " + (int) y + " rad/s");
+                // textZ.setText("Z : " + (int) z + " rad/s");
+            }
+        };
+
+
+/*        public void onSensorChanged(SensorEvent event)
         {
             // alpha is calculated as t / (t + dT)
             // with t, the low-pass filter's time-constant
@@ -130,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             linear_acceleration[1] = event.values[1] - gravity[1];
             linear_acceleration[2] = event.values[2] - gravity[2];
         }
-
+*/
 
 
     }
