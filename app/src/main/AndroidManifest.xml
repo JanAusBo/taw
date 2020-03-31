@@ -3,6 +3,7 @@
     package="de.jandaehler.balls">
 
     <uses-feature android:name="android.hardware.sensor.gyroscope" />
+    <uses-feature android:name="android.hardware.sensor.compass" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

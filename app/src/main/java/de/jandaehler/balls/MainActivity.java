@@ -19,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     SensorManager sensorManager;
-    Sensor sensor;
+    Sensor gravitiySensor;
+    Sensor magnetometer;
 
 
     @Override
@@ -29,19 +30,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(new MyView(this));
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY); // (Sensor.TYPE_GYROSCOPE);
-
+        gravitiySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY); // (Sensor.TYPE_GYROSCOPE);
+        magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
     public void onResume() {
         super.onResume();
-        sensorManager.registerListener(gyroListener, sensor,
+        sensorManager.registerListener(gyroListener, gravitiySensor,
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(magnetoListener, magnetometer,
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void onStop() {
         super.onStop();
         sensorManager.unregisterListener(gyroListener);
+        sensorManager.unregisterListener(magnetoListener);
     }
 
     public SensorEventListener gyroListener = new SensorEventListener() {
@@ -58,6 +62,19 @@ public class MainActivity extends AppCompatActivity {
             // textX.setText("X : " + (int) x + " rad/s");
             // textY.setText("Y : " + (int) y + " rad/s");
             // textZ.setText("Z : " + (int) z + " rad/s");
+        }
+    };
+
+    public SensorEventListener magnetoListener = new SensorEventListener() {
+        public void onAccuracyChanged(Sensor sensor, int acc) {
+        }
+
+        public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            Log.d("Magneto","X : " + (int) x + " rad/s, Y : " + (int) y + " rad/s, Z : " + (int) z + " rad/s,");
         }
     };
 
@@ -116,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
             sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+            magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
             gravity = new float[3];
             linear_acceleration = new float[3];
 
