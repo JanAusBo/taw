@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     SensorManager sensorManager;
     Sensor gravitiySensor;
     Sensor magnetometer;
+    String magnetoString = "";
+    String gravityString = "";
 
 
     @Override
@@ -57,8 +59,10 @@ public class MainActivity extends AppCompatActivity {
             float y = event.values[1];
             float z = event.values[2];
 
-            Log.d("Gravity","X : " + (int) x + " rad/s, Y : " + (int) y + " rad/s, Z : " + (int) z + " rad/s,");
+            String msg = "X : " + (int) x + " rad/s, Y : " + (int) y + " rad/s, Z : " + (int) z + " rad/s,";
 
+            Log.d("Gravity",msg);
+            gravityString = "Gravity " + msg;
             // textX.setText("X : " + (int) x + " rad/s");
             // textY.setText("Y : " + (int) y + " rad/s");
             // textZ.setText("Z : " + (int) z + " rad/s");
@@ -74,13 +78,21 @@ public class MainActivity extends AppCompatActivity {
             float y = event.values[1];
             float z = event.values[2];
 
-            Log.d("Magneto","X : " + (int) x + " rad/s, Y : " + (int) y + " rad/s, Z : " + (int) z + " rad/s,");
+            String msg = "X : " + (int) x + " rad/s, Y : " + (int) y + " rad/s, Z : " + (int) z + " rad/s,";
+
+            Log.d("Magneto",msg);
+            magnetoString = "Magneto " + msg;
+
+
         }
     };
 
     public class MyView extends View
     {
         Paint paint = null;
+        Paint circleText = null;
+        Paint debugText = null;
+        String debugString = "";
 
         int x = 0;
         int y = 0;
@@ -129,6 +141,14 @@ public class MainActivity extends AppCompatActivity {
             super(context);
             paint = new Paint();
 
+            circleText = new Paint(Paint.ANTI_ALIAS_FLAG);
+            circleText.setColor(Color.parseColor("#000000")); //black
+            circleText.setTextSize(30);
+
+            debugText = new Paint(Paint.ANTI_ALIAS_FLAG);
+            debugText.setColor(Color.parseColor("#000000"));
+            debugText.setTextSize(30);
+
             mHandler = new Handler();
 
             sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -154,6 +174,12 @@ public class MainActivity extends AppCompatActivity {
             // Use Color.parseColor to define HTML colors
             paint.setColor(Color.parseColor("#CD5C5C"));
             canvas.drawCircle(ball.getPosX(), ball.getPosY(), radius, paint);
+            String myText = "Das ist der Info Text";
+
+            canvas.drawText(myText, 100, 100, circleText);
+            canvas.drawText(magnetoString, 20, 930, debugText);
+            canvas.drawText(gravityString, 20, 960, debugText);
+
         }
 
         private void collisionChecker(){
@@ -172,26 +198,6 @@ public class MainActivity extends AppCompatActivity {
             ball.move();
             invalidate();
         }
-
-
-/*        public void onSensorChanged(SensorEvent event)
-        {
-            // alpha is calculated as t / (t + dT)
-            // with t, the low-pass filter's time-constant
-            // and dT, the event delivery rate
-
-            final float alpha = (float) 0.8;
-
-            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
-
-            linear_acceleration[0] = event.values[0] - gravity[0];
-            linear_acceleration[1] = event.values[1] - gravity[1];
-            linear_acceleration[2] = event.values[2] - gravity[2];
-        }
-*/
-
 
     }
 }
