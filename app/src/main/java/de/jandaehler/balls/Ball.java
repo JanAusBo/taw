@@ -41,6 +41,8 @@ public class Ball {
 
 
     public void move() {
+        // Physik abfragen
+
         // Neue Position berechnen
         posX += dirX;
         posY += dirY;
