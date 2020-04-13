@@ -15,15 +15,17 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
-
-
     SensorManager sensorManager;
-    Sensor gravitiySensor;
+    Sensor gravitySensor;
     Sensor magnetometer;
     String magnetoString = "";
     String gravityString = "";
-
+    static List<LiveCicleObserver> liveCircleObserverList;
+    Physics physics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +33,23 @@ public class MainActivity extends AppCompatActivity {
         // setContentView(R.layout.activity_main);
         setContentView(new MyView(this));
 
+        liveCircleObserverList = new LinkedList<LiveCicleObserver>();
+        physics = new Physics();
+        liveCircleObserverList.add(physics);
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        gravitiySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY); // (Sensor.TYPE_GYROSCOPE);
-        // magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY); // (Sensor.TYPE_GYROSCOPE);
     }
 
     public void onResume() {
         super.onResume();
-        sensorManager.registerListener(gyroListener, gravitiySensor,
+
+
+        liveCircleObserverList.forEach((v)-> v.onResume());
+
+
+
+        sensorManager.registerListener(gyroListener, gravitySensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(magnetoListener, magnetometer,
                 SensorManager.SENSOR_DELAY_NORMAL);
@@ -63,9 +74,6 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d("Gravity",msg);
             gravityString = "Gravity " + msg;
-            // textX.setText("X : " + (int) x + " rad/s");
-            // textY.setText("Y : " + (int) y + " rad/s");
-            // textZ.setText("Z : " + (int) z + " rad/s");
         }
     };
 
@@ -177,8 +185,8 @@ public class MainActivity extends AppCompatActivity {
             String myText = "Das ist der Info Text";
 
             canvas.drawText(myText, 100, 100, circleText);
-            canvas.drawText(magnetoString, 20, 930, debugText);
-            canvas.drawText(gravityString, 20, 960, debugText);
+            canvas.drawText(physics.getMagnetoString(), 20, 930, debugText);
+            canvas.drawText(physics.getGravityString(), 20, 960, debugText);
 
         }
 
