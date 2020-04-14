@@ -19,11 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    SensorManager sensorManager;
-    Sensor gravitySensor;
-    Sensor magnetometer;
-    String magnetoString = "";
-    String gravityString = "";
+
+
     static List<LiveCicleObserver> liveCircleObserverList;
     Physics physics;
 
@@ -34,66 +31,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(new MyView(this));
 
         liveCircleObserverList = new LinkedList<LiveCicleObserver>();
-        physics = new Physics();
+        physics = new Physics(this.getApplicationContext());
         liveCircleObserverList.add(physics);
 
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY); // (Sensor.TYPE_GYROSCOPE);
+        liveCircleObserverList.forEach((v)-> v.onCreate());
     }
 
     public void onResume() {
         super.onResume();
-
-
         liveCircleObserverList.forEach((v)-> v.onResume());
-
-
-
-        sensorManager.registerListener(gyroListener, gravitySensor,
-                SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(magnetoListener, magnetometer,
-                SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void onStop() {
         super.onStop();
-        sensorManager.unregisterListener(gyroListener);
-        sensorManager.unregisterListener(magnetoListener);
+        liveCircleObserverList.forEach((v)-> v.onStop());
     }
-
-    public SensorEventListener gyroListener = new SensorEventListener() {
-        public void onAccuracyChanged(Sensor sensor, int acc) {
-        }
-
-        public void onSensorChanged(SensorEvent event) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-
-            String msg = "X : " + (int) x + " rad/s, Y : " + (int) y + " rad/s, Z : " + (int) z + " rad/s,";
-
-            Log.d("Gravity",msg);
-            gravityString = "Gravity " + msg;
-        }
-    };
-
-    public SensorEventListener magnetoListener = new SensorEventListener() {
-        public void onAccuracyChanged(Sensor sensor, int acc) {
-        }
-
-        public void onSensorChanged(SensorEvent event) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-
-            String msg = "X : " + (int) x + " rad/s, Y : " + (int) y + " rad/s, Z : " + (int) z + " rad/s,";
-
-            Log.d("Magneto",msg);
-            magnetoString = "Magneto " + msg;
-
-
-        }
-    };
 
     public class MyView extends View
     {
@@ -116,12 +68,6 @@ public class MainActivity extends AppCompatActivity {
         private float gravity[];
         private float linear_acceleration[];
 
-
-//        @Override
-//        public void onDestroy() {
-//            super.onDestroy();
-//            stopRepeatingTask();
-//        }
 
         Runnable mStatusChecker = new Runnable() {
             @Override
@@ -161,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
             sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-            magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
             gravity = new float[3];
             linear_acceleration = new float[3];
 
@@ -185,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
             String myText = "Das ist der Info Text";
 
             canvas.drawText(myText, 100, 100, circleText);
-            canvas.drawText(physics.getMagnetoString(), 20, 930, debugText);
-            canvas.drawText(physics.getGravityString(), 20, 960, debugText);
+            canvas.drawText(physics.getGravityString(), 20, 930, debugText);
+            canvas.drawText(physics.getMagnetoString(), 20, 960, debugText);
 
         }
 
