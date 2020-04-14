@@ -2,15 +2,16 @@ package de.jandaehler.balls;
 
 public class Ball {
 
-    private int posX = 0;
-    private int posY = 0;
-    private int dirX = 0;
-    private int dirY = 0;
-    private double degree = 0;
-    private int speed = 0;
+    private int posX;
+    private int posY;
+    private int dirX;
+    private int dirY;
+    private double degree;
+    private int speed;
     private static final int DIRECTION_FACTOR = 5;
+    private Physics physics;
 
-    public Ball(int x, int y){
+    Ball(int x, int y, Physics physics){
         posX = x;
         posY = y;
         degree = (Math.random() * 360);
@@ -20,9 +21,11 @@ public class Ball {
         dirX = (int) ((Math.sin(degree) * DIRECTION_FACTOR));
         // über den Cosinus die Y-Koordinate berechnen
         dirY = (int) ((Math.cos(degree) * DIRECTION_FACTOR));
+
+        this.physics = physics;
     }
 
-    public int getPosX() {
+    int getPosX() {
         return posX;
     }
 
@@ -30,7 +33,7 @@ public class Ball {
         this.posX = posX;
     }
 
-    public int getPosY() {
+    int getPosY() {
         return posY;
     }
 
@@ -38,21 +41,20 @@ public class Ball {
         this.posY = posY;
     }
 
-
-
-    public void move() {
-        // Physik abfragen
-
-        // Neue Position berechnen
-        posX += dirX;
-        posY += dirY;
-    }
-
-    public void invertX() {
+    void invertX() {
         dirX*= -1;
     }
 
-    public void invertY() {
+    void invertY() {
         dirY*= -1;
+    }
+
+    void move() {
+        // Physik abfragen
+        dirX = dirX + (int) physics.getGravityX();
+        dirY = dirY + (int) physics.getGravityY();
+        // Neue Position berechnen
+        posX += dirX;
+        posY += dirY;
     }
 }

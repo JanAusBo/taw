@@ -6,20 +6,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
 
     static List<LiveCicleObserver> liveCircleObserverList;
     Physics physics;
@@ -29,11 +23,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // setContentView(R.layout.activity_main);
         setContentView(new MyView(this));
-
-        liveCircleObserverList = new LinkedList<LiveCicleObserver>();
+        liveCircleObserverList = new LinkedList<>();
         physics = new Physics(this.getApplicationContext());
         liveCircleObserverList.add(physics);
-
         liveCircleObserverList.forEach((v)-> v.onCreate());
     }
 
@@ -49,25 +41,18 @@ public class MainActivity extends AppCompatActivity {
 
     public class MyView extends View
     {
-        Paint paint = null;
-        Paint circleText = null;
-        Paint debugText = null;
+        Paint paint;
+        Paint circleText;
+        Paint debugText;
         String debugString = "";
 
         int x = 0;
         int y = 0;
         int radius = 150;
-        Ball ball = new Ball(150, 150);
-
-        private SensorManager sensorManager;
-        private Sensor sensor;
+        Ball ball = new Ball(150, 150, physics);
 
         private int mInterval = 5; // 5 seconds by default, can be changed later
         private Handler mHandler;
-
-        private float gravity[];
-        private float linear_acceleration[];
-
 
         Runnable mStatusChecker = new Runnable() {
             @Override
@@ -105,11 +90,6 @@ public class MainActivity extends AppCompatActivity {
 
             mHandler = new Handler();
 
-            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-            gravity = new float[3];
-            linear_acceleration = new float[3];
-
             startRepeatingTask();
         }
 
@@ -132,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
             canvas.drawText(myText, 100, 100, circleText);
             canvas.drawText(physics.getGravityString(), 20, 930, debugText);
             canvas.drawText(physics.getMagnetoString(), 20, 960, debugText);
-
         }
 
         private void collisionChecker(){
@@ -145,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void moveBall(){
-
-            // Log.v("moveBall", sensor.toString());
             collisionChecker();
             ball.move();
             invalidate();
