@@ -51,8 +51,11 @@ public class Ball {
 
     void move() {
         // Physik abfragen
-        dirX = dirX + (int) physics.getGravityX();
-        dirY = dirY + (int) physics.getGravityY();
+        if (physics != null){
+            dirX = dirX + (int) physics.getGravityX();
+            dirY = dirY + (int) physics.getGravityY();
+        }
+
         // Neue Position berechnen
         posX += dirX;
         posY += dirY;

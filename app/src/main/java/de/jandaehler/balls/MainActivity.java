@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -22,11 +23,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // setContentView(R.layout.activity_main);
-        setContentView(new MyView(this));
+        Log.d("onCreate","Die Methode wird aufgerufen.");
         liveCircleObserverList = new LinkedList<>();
         physics = new Physics(this.getApplicationContext());
         liveCircleObserverList.add(physics);
         liveCircleObserverList.forEach((v)-> v.onCreate());
+        setContentView(new MyView(this));
     }
 
     public void onResume() {

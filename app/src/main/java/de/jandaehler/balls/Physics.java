@@ -26,11 +26,11 @@ public class Physics implements LiveCicleObserver {
         return gravityString;
     }
 
-    public float getGravityX() {
+    float getGravityX() {
         return gravityX;
     }
 
-    public float getGravityY() {
+    float getGravityY() {
         return gravityY;
     }
 
@@ -68,8 +68,8 @@ public class Physics implements LiveCicleObserver {
         }
 
         public void onSensorChanged(SensorEvent event) {
-            float gravityX = event.values[0];
-            float gravityY = event.values[1];
+            gravityX = event.values[0];
+            gravityY = event.values[1];
             float z = event.values[2];
 
             String msg = "X : " + (int) gravityX + " rad/s, Y : " + (int) gravityY + " rad/s, Z : " + (int) z + " rad/s,";
