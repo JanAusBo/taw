@@ -127,23 +127,24 @@ public class Physics implements LiveCicleObserver {
         }
     };
 
-    public void checkCollision(Thing thing, int x, int y, int dirX, int dirY) {
+    public void checkCollision(Thing thing, int dirX, int dirY) {
 
         if (thing.getClass() == Ball.class) {
-            // check upper and lower bounds
-
-            if (thing.getPosX() + Ball.RADIUS + >= height){
-
+            // check bottom boundary
+            if (dirY > 0 && thing.getPosY() + Ball.RADIUS + dirY >= height) {
+                thing.setPosY(height - Ball.RADIUS);
             }
-
-
-
-            if (thing.getPosX() + Ball.RADIUS >= height || thing.getPosX() - Ball.RADIUS <= 0) {
-                thing.invertX();
+            // check right boundary
+            if (dirX > 0 && thing.getPosX() + Ball.RADIUS + dirX >= width){
+                thing.setPosX(width - Ball.RADIUS);
             }
-            // check left and right bounds
-            if (thing.getPosY() + Ball.RADIUS >= width || thing.getPosY() - Ball.RADIUS <= 0) {
-                thing.invertY();
+            // check top boundary
+            if (dirY < 0 && thing.getPosY() - Ball.RADIUS + dirY <= 0){
+                thing.setPosY(Ball.RADIUS);
+            }
+            //check left boundary
+            if (dirX < 0 && thing.getPosX() - Ball.RADIUS + dirX <= 0){
+                thing.setPosX(Ball.RADIUS);
             }
         }
     }
@@ -188,7 +189,7 @@ public class Physics implements LiveCicleObserver {
      * @param acceleration
      * @param time
      * @param velocity
-     * @return
+     * @return The new velocity value which can be negative.
      */
     float calcVelocity (float acceleration, long time, float velocity){
         return acceleration * time + velocity;

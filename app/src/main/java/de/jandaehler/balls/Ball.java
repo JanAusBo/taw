@@ -75,9 +75,10 @@ public class Ball implements Thing {
             velocityY = physics.calcVelocity(physics.getGravityY(), time, velocityY);
             float distanceY = physics.calcDistance(velocityY, time);
 
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-
-            physics.checkCollision(this, posX, posY);
+            physics.checkCollision(
+                    this,
+                    physics.meterToPixelHorizontal(distanceX),
+                    physics.meterToPixelVertical(distanceY));
 
         }
 
