@@ -1,7 +1,6 @@
 package de.jandaehler.balls;
 
 import android.os.SystemClock;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 public class Ball implements Thing {
@@ -65,17 +64,22 @@ public class Ball implements Thing {
 
         long currentTimeStamp = SystemClock.elapsedRealtime();
         long time = currentTimeStamp - lastTimeStamp;
+        if (time > 100) time = 100;
         Log.d("move", "" + (time));
         lastTimeStamp = currentTimeStamp;
+
+        float distanceX = 0;
+        float distanceY = 0;
+        Physics.CollisionAxis ca = Physics.CollisionAxis.NONE;
 
         // Physik abfragen
         if (physics != null){
             velocityX = physics.calcVelocity(physics.getGravityX(), time, velocityX);
-            float distanceX = physics.calcDistance(velocityX, time);
+            distanceX = physics.calcDistance(velocityX, time);
             velocityY = physics.calcVelocity(physics.getGravityY(), time, velocityY);
-            float distanceY = physics.calcDistance(velocityY, time);
+            distanceY = physics.calcDistance(velocityY, time);
 
-            physics.checkCollision(
+            ca = physics.checkCollision(
                     this,
                     physics.meterToPixelHorizontal(distanceX),
                     physics.meterToPixelVertical(distanceY));
@@ -83,7 +87,9 @@ public class Ball implements Thing {
         }
 
         // Neue Position berechnen
-        posX += velocityX;
-        posY += velocityY;
+        if (ca != Physics.CollisionAxis.BOTH && ca != Physics.CollisionAxis.X)
+            posX += physics.meterToPixelHorizontal(distanceX);
+        if (ca != Physics.CollisionAxis.BOTH && ca != Physics.CollisionAxis.Y)
+            posY += physics.meterToPixelVertical(distanceY);
     }
 }

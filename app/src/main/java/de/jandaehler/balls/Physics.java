@@ -21,6 +21,7 @@ public class Physics implements LiveCicleObserver {
     private int height;
     private int width;
     private enum Orientation{HORIZONTAL, VERTICAL}
+    public enum CollisionAxis{NONE, X, Y, BOTH};
 
     String getMagnetoString() {
         return magnetoString;
@@ -127,26 +128,33 @@ public class Physics implements LiveCicleObserver {
         }
     };
 
-    public void checkCollision(Thing thing, int dirX, int dirY) {
+    public CollisionAxis checkCollision(Thing thing, int dirX, int dirY) {
+
+        CollisionAxis ca = CollisionAxis.NONE;
 
         if (thing.getClass() == Ball.class) {
-            // check bottom boundary
-            if (dirY > 0 && thing.getPosY() + Ball.RADIUS + dirY >= height) {
-                thing.setPosY(height - Ball.RADIUS);
-            }
-            // check right boundary
-            if (dirX > 0 && thing.getPosX() + Ball.RADIUS + dirX >= width){
-                thing.setPosX(width - Ball.RADIUS);
-            }
             // check top boundary
             if (dirY < 0 && thing.getPosY() - Ball.RADIUS + dirY <= 0){
                 thing.setPosY(Ball.RADIUS);
+                ca = CollisionAxis.Y;
+            }
+            // check bottom boundary
+            if (dirY > 0 && thing.getPosY() + Ball.RADIUS + dirY >= height) {
+                thing.setPosY(height - Ball.RADIUS);
+                ca = CollisionAxis.Y;
             }
             //check left boundary
             if (dirX < 0 && thing.getPosX() - Ball.RADIUS + dirX <= 0){
                 thing.setPosX(Ball.RADIUS);
+                ca = ca == CollisionAxis.Y ? CollisionAxis.BOTH : CollisionAxis.X;
+            }
+            // check right boundary
+            if (dirX > 0 && thing.getPosX() + Ball.RADIUS + dirX >= width){
+                thing.setPosX(width - Ball.RADIUS);
+                ca = ca == CollisionAxis.Y ? CollisionAxis.BOTH : CollisionAxis.X;
             }
         }
+        return ca;
     }
 
     /**
@@ -192,7 +200,11 @@ public class Physics implements LiveCicleObserver {
      * @return The new velocity value which can be negative.
      */
     float calcVelocity (float acceleration, long time, float velocity){
-        return acceleration * time + velocity;
+        float t2 = (float) time / 1000;
+
+        float v2 = acceleration * t2 + velocity;
+
+        return v2; // acceleration * (time / 1000) + velocity;
     }
 
 
@@ -204,7 +216,7 @@ public class Physics implements LiveCicleObserver {
      * @return: Distance in meters with float precision.
      */
     public float calcDistance (float velocity, long time){
-        return velocity * time;
+        return velocity * ((float) time / 1000);
     }
 
 }

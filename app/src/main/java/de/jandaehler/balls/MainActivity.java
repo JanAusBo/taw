@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
@@ -91,8 +92,13 @@ public class MainActivity extends AppCompatActivity {
 
             mHandler = new Handler();
 
-            physics.setHeight(getHeight());
-            physics.setWidth(getWidth());
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int height = displayMetrics.heightPixels;
+            int width = displayMetrics.widthPixels;
+
+            physics.setHeight(height);
+            physics.setWidth(width);
 
 
             startRepeatingTask();
