@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 public class Physics implements LiveCicleObserver {
@@ -17,6 +18,9 @@ public class Physics implements LiveCicleObserver {
     private Context mContext;
     private float gravityX;
     private float gravityY;
+    private int height;
+    private int width;
+    private enum Orientation{HORIZONTAL, VERTICAL}
 
     String getMagnetoString() {
         return magnetoString;
@@ -26,12 +30,34 @@ public class Physics implements LiveCicleObserver {
         return gravityString;
     }
 
+    /**
+     * Returns the acceleration in X-direction. Range is 0 .. 9.81 m/s².
+     * Based on a Top-Left oriented coordinate systems acceleration to the right
+     * is represented as positive values, acceleration to the left is represented
+     * as negative values.
+     * @return
+     */
     float getGravityX() {
         return gravityX;
     }
 
+    /**
+     * Returns the acceleration in Y-direction. Range is 0 .. 9.81 m/s².
+     * Based on a Top-Left oriented coordinate systems downwards acceleration
+     * is represented as positive values, upwards acceleration is represented
+     * as negative values.
+     * @return
+     */
     float getGravityY() {
         return gravityY;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     Physics(Context context){
@@ -68,7 +94,7 @@ public class Physics implements LiveCicleObserver {
         }
 
         public void onSensorChanged(SensorEvent event) {
-            gravityX = event.values[0];
+            gravityX = event.values[0] * -1;
             gravityY = event.values[1];
             float z = event.values[2];
 
@@ -101,5 +127,83 @@ public class Physics implements LiveCicleObserver {
         }
     };
 
+    public void checkCollision(Thing thing, int x, int y, int dirX, int dirY) {
+
+        if (thing.getClass() == Ball.class) {
+            // check upper and lower bounds
+
+            if (thing.getPosX() + Ball.RADIUS + >= height){
+
+            }
+
+
+
+            if (thing.getPosX() + Ball.RADIUS >= height || thing.getPosX() - Ball.RADIUS <= 0) {
+                thing.invertX();
+            }
+            // check left and right bounds
+            if (thing.getPosY() + Ball.RADIUS >= width || thing.getPosY() - Ball.RADIUS <= 0) {
+                thing.invertY();
+            }
+        }
+    }
+
+    /**
+     * Convert from SI-unit to screen oriented unit in vertical orientation.
+     * @param length: Length in meter.
+     * @return Number of pixels.
+     */
+    public int meterToPixelVertical(float length){
+        return meterToPixel(Orientation.VERTICAL, length);
+    }
+
+    /**
+     * Convert from SI-unit to screen oriented unit in horizontal orientation.
+     * @param length: Length in meter.
+     * @return Number of pixels.
+     */
+    public int meterToPixelHorizontal(float length){
+        return meterToPixel(Orientation.HORIZONTAL, length);
+    }
+
+    private int meterToPixel(Orientation orientation, float length){
+        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+        float pixels;
+        if (orientation == Orientation.VERTICAL){
+            pixels = metrics.ydpi;
+        }else //Orientation.HORIZONTAL
+        {
+            pixels = metrics.xdpi;
+        }
+        // pixels per centimeter
+        pixels /= 2.54f;
+        // pixels per meter
+        pixels *= 100;
+        return (int) (pixels * length);
+    }
+
+    /**
+     * Calculates the new velocity by acceleration over time.
+     * Formula: v_neu = a * t + v_alt
+     * @param acceleration
+     * @param time
+     * @param velocity
+     * @return
+     */
+    float calcVelocity (float acceleration, long time, float velocity){
+        return acceleration * time + velocity;
+    }
+
+
+    /**
+     * calculates the distance in meter with single precision.
+     * Formula: s = v * t
+     * @param velocity: Velocity in m/s.
+     * @param time: In milliseconds.
+     * @return: Distance in meters with float precision.
+     */
+    public float calcDistance (float velocity, long time){
+        return velocity * time;
+    }
 
 }

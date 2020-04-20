@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
         int x = 0;
         int y = 0;
-        int radius = 150;
         Ball ball = new Ball(150, 150, physics);
 
         private int mInterval = 5; // 5 seconds by default, can be changed later
@@ -92,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
 
             mHandler = new Handler();
 
+            physics.setHeight(getHeight());
+            physics.setWidth(getWidth());
+
+
             startRepeatingTask();
         }
 
@@ -108,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             canvas.drawPaint(paint);
             // Use Color.parseColor to define HTML colors
             paint.setColor(Color.parseColor("#CD5C5C"));
-            canvas.drawCircle(ball.getPosX(), ball.getPosY(), radius, paint);
+            canvas.drawCircle(ball.getPosX(), ball.getPosY(), Ball.RADIUS, paint);
             String myText = "Das ist der Info Text";
 
             canvas.drawText(myText, 100, 100, circleText);
@@ -116,17 +119,7 @@ public class MainActivity extends AppCompatActivity {
             canvas.drawText(physics.getMagnetoString(), 20, 960, debugText);
         }
 
-        private void collisionChecker(){
-            if (ball.getPosX() + radius >= x || ball.getPosX() - radius <= 0){
-                ball.invertX();
-            }
-            if (ball.getPosY() + radius >= y || ball.getPosY() - radius <= 0){
-                ball.invertY();
-            }
-        }
-
         private void moveBall(){
-            collisionChecker();
             ball.move();
             invalidate();
         }
