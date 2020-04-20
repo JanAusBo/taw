@@ -136,21 +136,25 @@ public class Physics implements LiveCicleObserver {
             // check top boundary
             if (dirY < 0 && thing.getPosY() - Ball.RADIUS + dirY <= 0){
                 thing.setPosY(Ball.RADIUS);
+                thing.setVelocityY(0f);
                 ca = CollisionAxis.Y;
             }
             // check bottom boundary
             if (dirY > 0 && thing.getPosY() + Ball.RADIUS + dirY >= height) {
                 thing.setPosY(height - Ball.RADIUS);
+                thing.setVelocityY(0f);
                 ca = CollisionAxis.Y;
             }
             //check left boundary
             if (dirX < 0 && thing.getPosX() - Ball.RADIUS + dirX <= 0){
                 thing.setPosX(Ball.RADIUS);
+                thing.setVelocityX(0f);
                 ca = ca == CollisionAxis.Y ? CollisionAxis.BOTH : CollisionAxis.X;
             }
             // check right boundary
             if (dirX > 0 && thing.getPosX() + Ball.RADIUS + dirX >= width){
                 thing.setPosX(width - Ball.RADIUS);
+                thing.setVelocityX(0f);
                 ca = ca == CollisionAxis.Y ? CollisionAxis.BOTH : CollisionAxis.X;
             }
         }

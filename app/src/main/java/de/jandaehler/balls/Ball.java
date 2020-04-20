@@ -94,6 +94,16 @@ public class Ball implements Thing {
             posY += physics.meterToPixelVertical(distanceY);
     }
 
+    @Override
+    public void setVelocityX(float i) {
+        velocityX = i;
+    }
+
+    @Override
+    public void setVelocityY(float i) {
+        velocityY = i;
+    }
+
     public String getDebugString() {
 
         return String.format("vX: %,.2f dX: %,.2f vY: %,.2f dY: %,.2f", velocityX, distanceX, velocityY, distanceY);

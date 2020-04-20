@@ -8,4 +8,7 @@ interface Thing {
     void invertX();
     void invertY();
     void move();
+    void setVelocityX(float i);
+
+    void setVelocityY(float i);
 }
