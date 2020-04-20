@@ -9,6 +9,8 @@ public class Ball implements Thing {
     private int posY;
     private float velocityX;
     private float velocityY;
+    private float distanceX = 0;
+    private float distanceY = 0;
     static int RADIUS = 150;
     private double degree;
     private int speed;
@@ -68,8 +70,7 @@ public class Ball implements Thing {
         Log.d("move", "" + (time));
         lastTimeStamp = currentTimeStamp;
 
-        float distanceX = 0;
-        float distanceY = 0;
+
         Physics.CollisionAxis ca = Physics.CollisionAxis.NONE;
 
         // Physik abfragen
@@ -91,5 +92,11 @@ public class Ball implements Thing {
             posX += physics.meterToPixelHorizontal(distanceX);
         if (ca != Physics.CollisionAxis.BOTH && ca != Physics.CollisionAxis.Y)
             posY += physics.meterToPixelVertical(distanceY);
+    }
+
+    public String getDebugString() {
+
+        return String.format("vX: %,.2f dX: %,.2f vY: %,.2f dY: %,.2f", velocityX, distanceX, velocityY, distanceY);
+
     }
 }

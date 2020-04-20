@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
             canvas.drawText(myText, 100, 100, circleText);
             canvas.drawText(physics.getGravityString(), 20, 930, debugText);
-            canvas.drawText(physics.getMagnetoString(), 20, 960, debugText);
+            canvas.drawText(ball.getDebugString(), 20, 960, debugText);
         }
 
         private void moveBall(){
