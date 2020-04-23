@@ -16,7 +16,7 @@ public class Ball implements Thing {
     private int speed;
     private int weight;
     private int solidity;
-    private static final int DIRECTION_FACTOR = 5;
+    private static final int FRICTION = 2;
     private Physics physics;
     private long lastTimeStamp;
 
@@ -58,6 +58,15 @@ public class Ball implements Thing {
         velocityY *= -1;
     }
 
+    @Override
+    public void setVelocityX(float i) {
+        velocityX = i;
+    }
+
+    @Override
+    public void setVelocityY(float i) {
+        velocityY = i;
+    }
 
     /**
      * Moves the ball across the screen depending on physical principles.
@@ -75,9 +84,9 @@ public class Ball implements Thing {
 
         // Physik abfragen
         if (physics != null){
-            velocityX = physics.calcVelocity(physics.getGravityX(), time, velocityX);
+            velocityX = physics.calcVelocity(physics.getGravityX(), time, velocityX) / FRICTION;
             distanceX = physics.calcDistance(velocityX, time);
-            velocityY = physics.calcVelocity(physics.getGravityY(), time, velocityY);
+            velocityY = physics.calcVelocity(physics.getGravityY(), time, velocityY) / FRICTION;
             distanceY = physics.calcDistance(velocityY, time);
 
             ca = physics.checkCollision(
@@ -94,19 +103,7 @@ public class Ball implements Thing {
             posY += physics.meterToPixelVertical(distanceY);
     }
 
-    @Override
-    public void setVelocityX(float i) {
-        velocityX = i;
-    }
-
-    @Override
-    public void setVelocityY(float i) {
-        velocityY = i;
-    }
-
     public String getDebugString() {
-
-        return String.format("vX: %,.2f dX: %,.2f vY: %,.2f dY: %,.2f", velocityX, distanceX, velocityY, distanceY);
-
+        return String.format("vX: %,10.2f dX: %,10.2f vY: %,10.2f dY: %,10.2f", velocityX, distanceX, velocityY, distanceY);
     }
 }

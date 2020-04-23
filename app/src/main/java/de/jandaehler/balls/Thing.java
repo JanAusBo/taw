@@ -9,6 +9,5 @@ interface Thing {
     void invertY();
     void move();
     void setVelocityX(float i);
-
     void setVelocityY(float i);
 }

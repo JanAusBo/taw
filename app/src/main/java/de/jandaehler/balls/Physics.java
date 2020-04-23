@@ -89,7 +89,6 @@ public class Physics implements LiveCicleObserver {
         sensorManager.unregisterListener(magnetoListener);
     }
 
-
     private SensorEventListener gyroListener = new SensorEventListener() {
         public void onAccuracyChanged(Sensor sensor, int acc) {
         }
@@ -128,10 +127,15 @@ public class Physics implements LiveCicleObserver {
         }
     };
 
+    /**
+     * Checks if any bounds are in contact with the thing.
+     * @param thing: The thing e.g. a ball.
+     * @param dirX: Number of pixels the thing shall be moved in  horizontal direction.
+     * @param dirY: Number of pixels the thing shall be moved in  vertical direction.
+     * @return Which bounds are in contact with the thing.
+     */
     public CollisionAxis checkCollision(Thing thing, int dirX, int dirY) {
-
         CollisionAxis ca = CollisionAxis.NONE;
-
         if (thing.getClass() == Ball.class) {
             // check top boundary
             if (dirY < 0 && thing.getPosY() - Ball.RADIUS + dirY <= 0){
@@ -204,11 +208,7 @@ public class Physics implements LiveCicleObserver {
      * @return The new velocity value which can be negative.
      */
     float calcVelocity (float acceleration, long time, float velocity){
-        float t2 = (float) time / 1000;
-
-        float v2 = acceleration * t2 + velocity;
-
-        return v2; // acceleration * (time / 1000) + velocity;
+        return acceleration * (float) time / 1000f + velocity;
     }
 
 
